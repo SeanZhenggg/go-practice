@@ -1,3 +1,3 @@
-module reflect-i18n
+module practice
 
 go 1.21.0

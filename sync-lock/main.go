@@ -159,12 +159,14 @@ func test2(vars string) {
 var testCh = make(chan int, 3)
 var testCh2 = make(chan int, 3)
 
-func test3(ctx context.Context) {
+func test3(wg *sync.WaitGroup, ctx context.Context) {
+
 	for {
 		fmt.Printf("🍎🍎🍎🍎🍎🍎-----test 3-----\n")
 		select {
 		case <-ctx.Done():
 			fmt.Printf(" <-ctx.Done()")
+			wg.Done()
 			return
 		case a := <-testCh:
 			fmt.Printf("🍎🍎🍎🍎🍎🍎 Print a %v\n", a)
@@ -177,19 +179,22 @@ func test3(ctx context.Context) {
 	}
 }
 
-// func test4() {
-// 	for {
-// 		fmt.Printf("🍎🍎🍎🍎🍎🍎-----test 4-----\n")
-// 		select {
-
-// 		case a := <-testCh:
-// 			fmt.Printf("🍎🍎🍎🍎🍎🍎 Print a %v\n", a)
-// 		case b := <-testCh2:
-// 			fmt.Printf("🍎🍎🍎🍎🍎🍎 Print a %v\n", b)
-// 		}
-// 		fmt.Printf("🍎🍎🍎🍎🍎🍎-----test 4 end-----\n")
-// 	}
-// }
+func test4(wg *sync.WaitGroup, ctx context.Context) {
+	for {
+		fmt.Printf("🍎🍎🍎🍎🍎🍎-----test 4-----\n")
+		select {
+		case <-ctx.Done():
+			fmt.Printf(" <-ctx.Done()")
+			wg.Done()
+			return
+		case a := <-testCh:
+			fmt.Printf("🍎🍎🍎🍎🍎🍎 Print a %v\n", a)
+		case b := <-testCh2:
+			fmt.Printf("🍎🍎🍎🍎🍎🍎 Print a %v\n", b)
+		}
+		fmt.Printf("🍎🍎🍎🍎🍎🍎-----test 4 end-----\n")
+	}
+}
 
 func main() {
 
@@ -232,12 +237,11 @@ func main() {
 
 	// test1("")
 	// test2("")
-	// ctx := context.Background()
-	// ctx, _ = context.WithTimeout(ctx, time.Second)
-
-	// go test3(ctx)
-	// go test4()
-
-	// for {
-	// }
+	ctx := context.Background()
+	ctx, _ = context.WithTimeout(ctx, 5*time.Second)
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	//go test3(wg, ctx)
+	go test4(wg, ctx)
+	wg.Wait()
 }

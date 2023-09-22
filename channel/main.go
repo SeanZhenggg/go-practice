@@ -5,22 +5,6 @@ import (
 	"time"
 )
 
-func exampleForChannel3() {
-	var ch = make(chan int, 3)
-	//for i := 0; i < 3; i++ {
-	//	fmt.Printf("send data into channel : %v\n", i)
-	//	ch <- i
-	//}
-	//time.Sleep(time.Second)
-	close(ch)
-
-	for {
-		v, ok := <-ch
-		time.Sleep(time.Second)
-		fmt.Printf("v : %v, ok: %v\n", v, ok)
-	}
-}
-
 func exampleForChannel1() {
 	var ch = make(chan int)
 	var count int
@@ -68,8 +52,34 @@ func exampleForChannel2() {
 	fmt.Println("worker stop")
 
 }
+
+func exampleForChannel3() {
+	var ch = make(chan int, 3)
+	//for i := 0; i < 3; i++ {
+	//	fmt.Printf("send data into channel : %v\n", i)
+	//	ch <- i
+	//}
+	//time.Sleep(time.Second)
+	close(ch)
+
+	for {
+		v, ok := <-ch
+		time.Sleep(time.Second)
+		fmt.Printf("v : %v, ok: %v\n", v, ok)
+	}
+}
+
+func exampleForSelect1() {
+	defer fmt.Println("func returned...")
+	fmt.Println("func working...")
+
+	select {}
+
+}
+
 func main() {
 	//exampleForChannel1()
 	//exampleForChannel2()
-	exampleForChannel3()
+	//exampleForChannel3()
+	go exampleForSelect1()
 }

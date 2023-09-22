@@ -1,8 +1,27 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-func main() {
+func exampleForChannel3() {
+	var ch = make(chan int, 3)
+	//for i := 0; i < 3; i++ {
+	//	fmt.Printf("send data into channel : %v\n", i)
+	//	ch <- i
+	//}
+	//time.Sleep(time.Second)
+	close(ch)
+
+	for {
+		v, ok := <-ch
+		time.Sleep(time.Second)
+		fmt.Printf("v : %v, ok: %v\n", v, ok)
+	}
+}
+
+func exampleForChannel1() {
 	var ch = make(chan int)
 	var count int
 	go func() {
@@ -23,4 +42,34 @@ func main() {
 
 	v, ok := <-ch
 	fmt.Printf("done!!! count : %v, v : %v, ok : %v\n", count, v, ok)
+}
+
+func exampleForChannel2() {
+	var stop = make(chan struct{})
+
+	go func() {
+		for {
+			select {
+			case <-stop:
+				fmt.Println("channel get stop signal!!!")
+				return
+			default:
+				fmt.Println("still working")
+				time.Sleep(1 * time.Second)
+			}
+		}
+	}()
+
+	fmt.Println("worker start")
+	if v, ok := <-time.After(5 * time.Second); ok {
+		fmt.Printf("v: %v, ok : %v\n", v, ok)
+		stop <- struct{}{}
+	}
+	fmt.Println("worker stop")
+
+}
+func main() {
+	//exampleForChannel1()
+	//exampleForChannel2()
+	exampleForChannel3()
 }

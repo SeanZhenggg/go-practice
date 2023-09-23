@@ -38,6 +38,29 @@ type Record struct {
 	Employee
 }
 
+type Fooler interface {
+	Fool() string
+	Bar() string
+}
+
+type Container struct {
+	Fooler
+}
+
+type Foo struct{}
+
+func (f Foo) Fool() string {
+	return "I am a Foo!!!"
+}
+
+func (f Foo) Bar() string {
+	return "I am a Bar!!!"
+}
+
+func (c Container) Bar() string {
+	return "I am a Bar in Container " + c.Fooler.Bar()
+}
+
 func main() {
 	var a = &Animal{"123", 2}
 
@@ -68,4 +91,14 @@ func main() {
 	fmt.Println(record2.position)
 	fmt.Println(record2.IsAdult())
 	fmt.Println(record2.IsManager())
+
+	c := &Container{Fooler: &Foo{}}
+	callFoolerObj(c)
+}
+
+func callFoolerObj(f *Container) {
+	fmt.Println("call Container foo : " + f.Fool())
+	fmt.Println("call Fooler foo : " + f.Fooler.Fool())
+	fmt.Println("call Container bar : " + f.Bar())
+	fmt.Println("call Fooler bar : " + f.Fooler.Bar())
 }

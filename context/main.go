@@ -22,8 +22,26 @@ func main() {
 		}
 	}()
 
+	go childProcess(ctx)
+
 	time.Sleep(5 * time.Second)
 	fmt.Println("stop the goroutine")
 	cancel()
 	time.Sleep(5 * time.Second)
+}
+
+func childProcess(ctx context.Context) {
+	childCtx, cancel := context.WithTimeout(ctx, 8*time.Second)
+	defer cancel()
+
+	for {
+		select {
+		case <-childCtx.Done():
+			fmt.Println("childCtx call Done()!!!")
+			return
+		default:
+			fmt.Println("childProcess is running...")
+			time.Sleep(time.Second)
+		}
+	}
 }

@@ -18,6 +18,69 @@ var (
 	lock  sync.Mutex
 )
 
+func main() {
+	// wg.Add(6)
+	// for i := 0; i < 3; i++ {
+	// 	go reader(i)
+	// }
+
+	// for i := 0; i < 3; i++ {
+	// 	go writer(i)
+	// }
+	// time.Sleep(1 * time.Second)
+	// fmt.Println("🍎🍎🍎🍎🍎🍎 final count : ", count)
+	// wg.Wait()
+
+	// mu.Lock()
+	// defer mu.Unlock()
+	// copyTest(&mu)
+
+	// go printer("hello")
+	// go printer("world")
+
+	// go producer()
+	// go consumer()
+
+	// go producer()
+	// go consumer()
+
+	// channel()
+
+	// channel2()
+
+	// channel3()
+
+	// go producer2()
+	// go producer3()
+	// go consumer2()
+
+	// 定义一个数组模拟缓冲区
+	// var buff = make(chan int, 5)
+	// var exitCh = make(chan int)
+	// go producer4(buff)
+	// go consumer4(buff, exitCh)
+
+	// <-exitCh
+	// fmt.Println("程序结束了")
+
+	// test1("")
+	// test2("")
+
+	//ctx := context.Background()
+	//ctx, _ = context.WithTimeout(ctx, 5*time.Second)
+	//wg := &sync.WaitGroup{}
+	//wg.Add(1)
+	////go test3(wg, ctx)
+	//go test4(wg, ctx)
+	//wg.Wait()
+
+	wg.Add(2)
+	//go deadlock1()
+	go deadlock2()
+	go fixDeadlock1()
+	wg.Wait()
+}
+
 func printer(str string) {
 	lock.Lock() //添加锁,如果不添加那么可能执行输出hello也可能执行输出world,那么就是无序的
 	for _, val := range str {
@@ -204,68 +267,6 @@ func test4(wg *sync.WaitGroup, ctx context.Context) {
 	}
 }
 
-func main() {
-	// wg.Add(6)
-	// for i := 0; i < 3; i++ {
-	// 	go reader(i)
-	// }
-
-	// for i := 0; i < 3; i++ {
-	// 	go writer(i)
-	// }
-	// time.Sleep(1 * time.Second)
-	// fmt.Println("🍎🍎🍎🍎🍎🍎 final count : ", count)
-	// wg.Wait()
-
-	// mu.Lock()
-	// defer mu.Unlock()
-	// copyTest(&mu)
-
-	// go printer("hello")
-	// go printer("world")
-
-	// go producer()
-	// go consumer()
-
-	// go producer()
-	// go consumer()
-
-	// channel()
-
-	// channel2()
-
-	// channel3()
-
-	// go producer2()
-	// go producer3()
-	// go consumer2()
-
-	// 定义一个数组模拟缓冲区
-	// var buff = make(chan int, 5)
-	// var exitCh = make(chan int)
-	// go producer4(buff)
-	// go consumer4(buff, exitCh)
-
-	// <-exitCh
-	// fmt.Println("程序结束了")
-
-	// test1("")
-	// test2("")
-
-	//ctx := context.Background()
-	//ctx, _ = context.WithTimeout(ctx, 5*time.Second)
-	//wg := &sync.WaitGroup{}
-	//wg.Add(1)
-	////go test3(wg, ctx)
-	//go test4(wg, ctx)
-	//wg.Wait()
-
-	wg.Add(2)
-	go deadlock1()
-	go deadlock2()
-	wg.Wait()
-}
-
 func reader(id int) {
 	fmt.Printf("🍎🍎🍎🍎🍎🍎 reader %v start\n", id)
 	rw.RLock()
@@ -298,19 +299,53 @@ func copyTest(mu *sync.Mutex) {
 
 func deadlock1() {
 	muA.Lock()
-	defer muA.Unlock()
-	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1")
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 acquire lock A")
+	defer func() {
+		muA.Unlock()
+		fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 release lock A")
+	}()
 	muB.Lock()
-	defer muB.Unlock()
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 acquire lock B")
+	defer func() {
+		muB.Unlock()
+		fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 release lock B")
+	}()
 
 	wg.Done()
 }
 
 func deadlock2() {
 	muB.Lock()
-	defer muB.Unlock()
-	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock2")
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock2 acquire lock B")
+
+	defer func() {
+		muB.Unlock()
+		fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock2 release lock B")
+	}()
+
 	muA.Lock()
-	defer muA.Unlock()
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock2 acquire lock A")
+
+	defer func() {
+		muA.Unlock()
+		fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock2 release lock A")
+	}()
+
+	wg.Done()
+}
+
+func fixDeadlock1() {
+	muA.Lock()
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 acquire lock A")
+	muA.Unlock()
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 release lock A")
+	muB.Lock()
+	muA.TryLock()
+	fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 acquire lock B")
+	defer func() {
+		muB.Unlock()
+		fmt.Println("🍎🍎🍎🍎🍎🍎 deadlock1 release lock B")
+	}()
+
 	wg.Done()
 }

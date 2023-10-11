@@ -74,11 +74,26 @@ func main() {
 	//go test4(wg, ctx)
 	//wg.Wait()
 
-	wg.Add(2)
-	//go deadlock1()
-	go deadlock2()
-	go fixDeadlock1()
-	wg.Wait()
+	//wg.Add(2)
+	////go deadlock1()
+	//go deadlock2()
+	//go fixDeadlock1()
+	//wg.Wait()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("=====================recover: %v\n=====================", r)
+			//go t.function1()
+			//go t.function4()
+			//select {}
+		}
+	}()
+
+	t := &TokenS{
+		m: make(map[string]string),
+	}
+	go t.function1()
+	go t.function4()
+	select {}
 }
 
 func printer(str string) {
@@ -348,4 +363,49 @@ func fixDeadlock1() {
 	}()
 
 	wg.Done()
+}
+
+type TokenS struct {
+	sync.Mutex
+	m     map[string]string
+	mLock sync.Mutex
+}
+
+func (t *TokenS) function1() {
+	timer := time.NewTicker(10 * time.Millisecond)
+	for {
+		select {
+		case <-timer.C:
+			fmt.Println("call function 1...")
+			go func() {
+				t.function2()
+			}()
+		default:
+		}
+	}
+}
+
+func (t *TokenS) function2() {
+	t.Lock()
+	defer t.Unlock()
+
+	t.function3()
+}
+
+func (t *TokenS) function3() {
+	<-time.After(10 * time.Millisecond)
+
+	i := rand.Intn(26)
+
+	t.mLock.Lock()
+	t.m[string(rune(i+97))] = string(rune(i + 65))
+	t.mLock.Unlock()
+}
+
+func (t *TokenS) function4() {
+	for {
+		fmt.Println("call function 4...")
+		time.Sleep(10 * time.Millisecond)
+		t.function3()
+	}
 }

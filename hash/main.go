@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"crypto/sha256"
 	"fmt"
 )
@@ -8,5 +9,7 @@ import (
 func main() {
 	data := []byte("hello world")
 	hash := sha256.Sum256(data)
-	fmt.Printf("%x\n", string(hash[:]))
+	fmt.Printf("hash1 %x\n", string(hash[:]))
+	hash2 := md5.Sum(hash[:])
+	fmt.Printf("hash2 %x\n", string(hash2[:]))
 }

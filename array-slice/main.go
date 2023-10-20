@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"unsafe"
 )
 
 func main() {
-	sliceCopy()
+	//sliceCopy()
+	//
+	//sliceDelete()
+	//
+	//sliceExample()
 
-	sliceDelete()
-
-	sliceExample()
+	sliceReAssign()
 }
 
 func sliceCopy() {
@@ -53,4 +56,11 @@ func sliceExample() {
 	fmt.Printf("🍎🍎🍎🍎🍎🍎 a : memory : %p, value : %v, len : %v, cap : %v \n", a, a, len(a), cap(a))
 	b := a[15:16]
 	fmt.Println(b)
+}
+
+func sliceReAssign() {
+	a := []int{0, 1, 2, 3, 4}
+	fmt.Printf("a's memory before: \n%p\n%p\n%p\n%p\n%p\n%v\n", &a[0], &a[1], &a[2], &a[3], &a[4], unsafe.Sizeof(a[0]))
+	a = []int{1, 2, 3, 4, 5}
+	fmt.Printf("a's memory after: \n%p\n%p\n%p\n%p\n%p\n%v\n", &a[0], &a[1], &a[2], &a[3], &a[4], unsafe.Sizeof(a[0]))
 }

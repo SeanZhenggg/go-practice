@@ -23,7 +23,11 @@ func main() {
 	//}
 
 	loc, _ := time.LoadLocation("Asia/Taipei")
-	fmt.Printf("loc : %v\n", loc)
-	localTime, _ := time.ParseInLocation(time.RFC3339Nano, "2023-09-27T15:45:00.0000000-04:00", loc)
-	fmt.Printf("the_time : %v\n", localTime.Unix())
+	//fmt.Printf("loc : %v\n", loc)
+	//localTime, _ := time.ParseInLocation(time.RFC3339Nano, "2023-09-27T15:45:00.0000000-04:00", loc)
+	//fmt.Printf("the_time : %v\n", localTime.Unix())
+	time, err := time.ParseInLocation("20060102", "20231017", loc)
+	if err == nil {
+		fmt.Printf("time: %v", time.String())
+	}
 }

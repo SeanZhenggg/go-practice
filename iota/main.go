@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// 宣告 const 分組時，用 iota 賦予值，籲社會從 0 開始，並且陸續+1
+// 宣告 const 分組時，用 iota 賦予值，預設會從 0 開始，並且陸續+1
 const (
 	a = iota
 	b = iota
@@ -37,6 +37,15 @@ const (
 	t
 	u
 	v
+)
+
+// 它出現在第幾行，值就為多少，不管前面的常數的型別
+const (
+	w  = 'b'
+	x  = "b"
+	aa = 80
+	y  = iota + 2
+	z
 )
 
 func main() {

@@ -32,30 +32,40 @@ type SampleData struct {
 }
 
 func main() {
-	sData := &SampleData{
-		HelloValue:        "hello",
-		WorldValue:        "world",
-		NoneSetValue:      "noneset",
-		WrongI18nKeyValue: "wrongvalue",
-	}
+	//sData := &SampleData{
+	//	HelloValue:        "hello",
+	//	WorldValue:        "world",
+	//	NoneSetValue:      "noneset",
+	//	WrongI18nKeyValue: "wrongvalue",
+	//}
+	//
+	//headerLanguage := "zh"
+	//fmt.Printf("=====[lang] %v=====\n", headerLanguage)
+	//fmt.Printf("sData parsed before : %v\n", sData)
+	//reflectForI18n(headerLanguage, sData)
+	//fmt.Printf("sData parsed after : %v\n\n", sData)
+	//
+	//headerLanguage = "en"
+	//fmt.Printf("=====[lang] %v=====\n", headerLanguage)
+	//fmt.Printf("sData parsed before : %v\n", sData)
+	//reflectForI18n(headerLanguage, sData)
+	//fmt.Printf("sData parsed after : %v\n\n", sData)
+	//
+	//headerLanguage = "jp"
+	//fmt.Printf("=====[lang] %v=====\n", headerLanguage)
+	//fmt.Printf("sData parsed before : %v\n", sData)
+	//reflectForI18n(headerLanguage, sData)
+	//fmt.Printf("sData parsed after : %v\n\n", sData)
 
-	headerLanguage := "zh"
-	fmt.Printf("=====[lang] %v=====\n", headerLanguage)
-	fmt.Printf("sData parsed before : %v\n", sData)
-	reflectForI18n(headerLanguage, sData)
-	fmt.Printf("sData parsed after : %v\n\n", sData)
+	s := struct{ A int }{0}
+	field := reflect.ValueOf(s).Field(0)
 
-	headerLanguage = "en"
-	fmt.Printf("=====[lang] %v=====\n", headerLanguage)
-	fmt.Printf("sData parsed before : %v\n", sData)
-	reflectForI18n(headerLanguage, sData)
-	fmt.Printf("sData parsed after : %v\n\n", sData)
+	a := field.Interface()
+	fmt.Println(reflect.TypeOf(a), a)
+	b := reflect.Zero(field.Type())
+	fmt.Println(reflect.TypeOf(b), b)
 
-	headerLanguage = "jp"
-	fmt.Printf("=====[lang] %v=====\n", headerLanguage)
-	fmt.Printf("sData parsed before : %v\n", sData)
-	reflectForI18n(headerLanguage, sData)
-	fmt.Printf("sData parsed after : %v\n\n", sData)
+	fmt.Println(reflect.DeepEqual(field.Interface(), reflect.Zero(field.Type())))
 }
 
 func getI18nMapByLang(lang string) map[string]string {

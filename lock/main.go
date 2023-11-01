@@ -3,8 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -79,21 +83,42 @@ func main() {
 	//go deadlock2()
 	//go fixDeadlock1()
 	//wg.Wait()
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("=====================recover: %v\n=====================", r)
-			//go t.function1()
-			//go t.function4()
-			//select {}
-		}
+
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		fmt.Printf("=====================recover: %v\n=====================", r)
+	//		//go t.function1()
+	//		//go t.function4()
+	//		//select {}
+	//	}
+	//}()
+	//
+	//t := &TokenS{
+	//	m: make(map[string]string),
+	//}
+	//go t.function1()
+	//go t.function4()
+	//select {}
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		<-time.After(10 * time.Second)
+		cancel()
 	}()
 
-	t := &TokenS{
-		m: make(map[string]string),
+	select {
+	case <-interrupt:
+		log.Printf("is interrupting...")
+		<-ctx.Done()
+		log.Printf("is done...")
 	}
-	go t.function1()
-	go t.function4()
-	select {}
+
+	defer func() {
+		log.Printf("main is exiting...")
+	}()
 }
 
 func printer(str string) {

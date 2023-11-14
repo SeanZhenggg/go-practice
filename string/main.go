@@ -109,5 +109,13 @@ func main() {
 
 	//StringRegexMatch()
 
-	BackQuoteInString()
+	//BackQuoteInString()
+
+	//var bts []byte
+	//fmt.Printf("empty bts : %v, is nil : %v, len: %v", bts, bts == nil, len(bts))
+
+	//var str = "123456"
+	//fmt.Printf("str : %v\n", str[:3])
+	var err error
+	fmt.Printf("err : %v\n", err)
 }

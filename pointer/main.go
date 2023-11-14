@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"time"
-	"unsafe"
 )
 
 // 定義一個名為 Person 的結構（struct）
@@ -18,44 +17,64 @@ func modifyValue(x *int) {
 
 func main() {
 	// 創建一個 Person 變數，名稱為 Alice，年齡為 30 歲
-	alice := Person{Name: "Alice", Age: 30}
+	//alice := Person{Name: "Alice", Age: 30}
+	//
+	//// 計算 Person 變數 alice 的大小
+	//personSize := unsafe.Sizeof(alice)
+	//
+	//// 創建一個指向 Person 變數的Pointer，名稱為 Bob，年齡為 24 歲
+	//bob := &Person{Name: "Bob", Age: 24}
+	//
+	//// 計算指向 Person 變數 bob 的Pointer的大小
+	//pointerSize := unsafe.Sizeof(bob)
+	//
+	//fmt.Printf("alice 變數 %v 的大小： %d 個位元組\n", alice, personSize)
+	//fmt.Printf("bob 指向 Person 變數 %v 的Pointer的大小： %d 個位元組\n", bob, pointerSize)
+	//fmt.Printf("alice 變數的記憶體位置 : %v\n", &alice) // 列印 alice 變數的記憶體位置
+	//fmt.Printf("bob 變數的記憶體位置 : %v\n", &bob)     // 列印 bob 變數（Pointer）的記憶體位置
+	//
+	//y := 10
+	//modifyValue(&y) // 通過Pointer修改y的值
+	//fmt.Println("y =", y)
+	//
+	//// 創建一個包含大量資料的整數陣列
+	//var arr [N]int
+	//for i := 0; i < N; i++ {
+	//	arr[i] = i
+	//}
+	//
+	//// 測試不使用指標的情況，複製陣列
+	//startTime := time.Now()
+	//result1 := sumValues(arr)
+	//duration1 := time.Since(startTime)
+	//
+	//// 測試使用指標的情況，避免複製陣列
+	//startTime = time.Now()
+	//result2 := sumPointers(&arr)
+	//duration2 := time.Since(startTime)
+	//
+	//fmt.Printf("不使用指標的結果：%d，執行時間：%v\n", result1, duration1)
+	//fmt.Printf("使用指標的結果：%d，執行時間：%v\n", result2, duration2)
 
-	// 計算 Person 變數 alice 的大小
-	personSize := unsafe.Sizeof(alice)
-
-	// 創建一個指向 Person 變數的Pointer，名稱為 Bob，年齡為 24 歲
-	bob := &Person{Name: "Bob", Age: 24}
-
-	// 計算指向 Person 變數 bob 的Pointer的大小
-	pointerSize := unsafe.Sizeof(bob)
-
-	fmt.Printf("alice 變數 %v 的大小： %d 個位元組\n", alice, personSize)
-	fmt.Printf("bob 指向 Person 變數 %v 的Pointer的大小： %d 個位元組\n", bob, pointerSize)
-	fmt.Printf("alice 變數的記憶體位置 : %v\n", &alice) // 列印 alice 變數的記憶體位置
-	fmt.Printf("bob 變數的記憶體位置 : %v\n", &bob)     // 列印 bob 變數（Pointer）的記憶體位置
-
-	y := 10
-	modifyValue(&y) // 通過Pointer修改y的值
-	fmt.Println("y =", y)
-
-	// 創建一個包含大量資料的整數陣列
-	var arr [N]int
-	for i := 0; i < N; i++ {
-		arr[i] = i
+	//a, b, c, d := 1, 2, 3, 4
+	var ls = []int{1, 2, 3, 4}
+	ls2 := make([]*int, 0, 4)
+	for _, v := range ls {
+		go func() {
+			ls2 = append(ls2, &v)
+		}()
+		time.Sleep(100 * time.Nanosecond)
 	}
+	time.Sleep(1 * time.Second)
+	fmt.Printf("%v, %v, %v, %v", *ls2[0], *ls2[1], *ls2[2], *ls2[3])
 
-	// 測試不使用指標的情況，複製陣列
-	startTime := time.Now()
-	result1 := sumValues(arr)
-	duration1 := time.Since(startTime)
-
-	// 測試使用指標的情況，避免複製陣列
-	startTime = time.Now()
-	result2 := sumPointers(&arr)
-	duration2 := time.Since(startTime)
-
-	fmt.Printf("不使用指標的結果：%d，執行時間：%v\n", result1, duration1)
-	fmt.Printf("使用指標的結果：%d，執行時間：%v\n", result2, duration2)
+	//tt := Test{
+	//	name: "Sean",
+	//	age:  12,
+	//}
+	//fmt.Printf("tt before ToModel : %v\n", tt)
+	//tt.ToModel()
+	//fmt.Printf("tt after ToModel : %v\n", tt)
 }
 
 const N = 1000000 // 陣列大小
@@ -76,4 +95,14 @@ func sumPointers(arr *[N]int) int {
 		sum += v
 	}
 	return sum
+}
+
+type Test struct {
+	name string
+	age  int
+}
+
+func (t Test) ToModel() {
+	t.name = t.name + " hello"
+	t.age = t.age + 15
 }

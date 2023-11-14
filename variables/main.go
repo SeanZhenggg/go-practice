@@ -20,21 +20,21 @@ func main() {
 	fmt.Printf("[main] a, b val : %v, %v, a, b mem : %p, %p\n", a, b, &a, &b)
 	createVars(b)
 
-	createVars2()
+	//createVars2()
 }
 
 func createVars(b int) (c int) {
-	fmt.Printf("[createVars] a, b val : %v, %v, a, b mem : %p, %p\n", a, b, &a, &b)
+	fmt.Printf("[createVars] a, b, c val : %v, %v, %v\na, b ,c mem : %p, %p, %p\n", a, b, c, &a, &b, &c)
 
 	b = 49
 	a = 50
-	fmt.Printf("[createVars] a, b val : %v, %v, a, b mem : %p, %p\n", a, b, &a, &b)
+	fmt.Printf("[createVars] a, b, c val : %v, %v, %v\na, b ,c mem : %p, %p, %p\n", a, b, c, &a, &b, &c)
 
 	//var a = 49
 	//fmt.Printf("a val : %v, a mem : %p\n", a, &a)
 
 	a, c := 78, 87
-	fmt.Printf("[createVars] a, c val : %v, %v, a, c mem : %p, %p\n", a, c, &a, &c)
+	fmt.Printf("[createVars] a, b, c val : %v, %v, %v\na, b ,c mem : %p, %p, %p\n", a, b, c, &a, &b, &c)
 
 	return c
 }

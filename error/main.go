@@ -45,10 +45,10 @@ func main() {
 	//
 	//err2 := xerrors.Errorf("raiseError2: %w", nil)
 	//fmt.Print("%+v\n", err2)
-	resp := errResp{Code: 100, Message: "i am error", Raw: `i am raw error response`}
+	resp := &errResp{Code: 100, Message: "i am error", Raw: `i am raw error response`}
 	err1 := xerrors.Errorf("this is error 1 : %w", resp)
 	err2 := xerrors.Errorf("this is error 2 : %w", err1)
-	var e = errResp{}
+	var e = &errResp{}
 	if ok := errors.As(err2, &e); ok {
 		fmt.Printf("is resp err: %v", e)
 	} else {

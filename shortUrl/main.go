@@ -20,7 +20,7 @@ func main() {
 	//fmt.Printf("value: %d", r.Intn(56800235583-916132832)+916132832)
 	fmt.Printf("shorUrl = %v\n", GenShortUrlV1(1111111111))
 
-	//GenShortUrlV2("https://www.google.com")
+	GenShortUrlV2("https://www.google.com")
 }
 
 func GenShortUrlV1(id int64) string {
